@@ -4,15 +4,12 @@
 </style>
 
 <template>
-    <div>
-        <Layout>
-            <Header>Header</Header>
-            <Content>Content</Content>
-        </Layout>
-    </div>
+    <threeContainer />
 </template>
 
 <script>
+    import threeContainer from "../components/threeContainer";
+
     export default {
         name: "home",
         data () {
@@ -21,7 +18,11 @@
             };
         },
         async mounted () {
-            await this.$api.queryByQQNum(10000);
+            let data = await this.$api.queryByQQNum(10000);
+            console.log(data);
         },
+        components: {
+            threeContainer
+        }
     };
 </script>

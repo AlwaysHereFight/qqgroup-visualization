@@ -16,6 +16,8 @@
   "dependencies": {
     "axios": "^0.18.0",
     "iview": "^2.14.3",
+    "three": "^0.94.0",
+    "three-orbitcontrols": "^2.1.2",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1"
   },
