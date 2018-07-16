@@ -31,13 +31,43 @@ async function main () {
             allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
         });
 
+        //QQ号拓展查询接口
+        router.get('/qqext/:id', async (ctx, next) => {
+            let qqNum = Number(ctx.params.id);
+            let result = await pool.request()
+                            .input('QQNum', MSSQL.Int, qqNum)
+                            .execute('queryByQQNumExt');
+            ctx.body = {
+                member: result.recordsets[0],
+                group: result.recordsets[1],
+                link: result.recordsets[2]
+            };
+        });
+
         //QQ号查询接口
         router.get('/qq/:id', async (ctx, next) => {
             let qqNum = Number(ctx.params.id);
             let result = await pool.request()
                             .input('QQNum', MSSQL.Int, qqNum)
                             .execute('queryByQQNum');
-            ctx.body = result.recordsets;
+            ctx.body = {
+                member: result.recordsets[0],
+                group: result.recordsets[1],
+                link: result.recordsets[2]
+            };
+        });
+
+        //群号查询接口
+        router.get("/group/:num", async (ctx, next) => {
+            let groupNum = Number(ctx.params.num);
+            let result = await pool.request()
+                            .input("groupNum", MSSQL.Int, groupNum)
+                            .execute("queryByGroupNum");
+            ctx.body = {
+                member: result.recordsets[0],
+                group: result.recordsets[1],
+                link: result.recordsets[2]
+            };
         });
 
         app.use(cors).use(KoaStatic(__dirname + "/www")).use(router.routes()).use(router.allowedMethods());
