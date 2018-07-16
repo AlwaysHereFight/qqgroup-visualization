@@ -5,9 +5,11 @@ import Vue from "vue";
 import App from "./App";
 import router from "./router";
 import iView from "iview";
+import { get } from "./utils/http";
 import "iview/dist/styles/iview.css";
 
 Vue.config.productionTip = false;
+Vue.prototype.$get = get;
 
 Vue.use(iView);
 
