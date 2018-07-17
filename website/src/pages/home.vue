@@ -18,8 +18,8 @@
             };
         },
         async mounted () {
-            let data = await this.$api.queryByQQNum(10000);
-            console.log(data);
+            // let data = await this.$api.queryByQQNum(10000);
+            // console.log(data);
         },
         components: {
             threeContainer

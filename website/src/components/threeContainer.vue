@@ -1,14 +1,28 @@
 
 <style scoped>
-    #threeContainer {
+
+    #imgCanvas {
+        display: none;
+        border: solid 1px black;
+    }
+
+    .outDiv {
         position: fixed;
+        width: 100%;
+        height: 100%;       
+    }
+
+    #threeContainer {
         width: 100%;
         height: 100%;
     }
 </style>
 
 <template>
-    <div id="threeContainer">
+    <div class="outDiv">
+        <canvas id="imgCanvas" width="1280" height="640"></canvas>
+        <div id="threeContainer">
+        </div>
     </div>
 </template>
 
@@ -48,13 +62,33 @@
                 return render;
             },
 
-            createSphere () {
+
+            async createQQBall (qqNum) {
+            },
+
+            createGroupBall (groupNum) {
+
+            },
+
+            async createSphere () {
+                let img = await this.$api.getGroupImg(594410203);
+                let cvs = this.$el.querySelector("#imgCanvas");
+                let ctx = cvs.getContext("2d");
+                ctx.drawImage(img, 0, 0, cvs.width / 2, cvs.height);
+                ctx.drawImage(img, cvs.width / 2, 0, cvs.width / 2, cvs.height);
+
+                let texture = new THREE.Texture(cvs);
                 let sphereGeometry = new THREE.SphereGeometry(10, 20, 20);
                 let sphereMaterial = new THREE.MeshStandardMaterial({
-                    color: 0x7777ff
+                    color: "white",
+                    roughness: 0,
+                    metalness: 0,
+                    map: texture
                 });
+                texture.needsUpdate = true;
+
                 let sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-                sphere.position.set(30, 30, 30);
+                sphere.position.set(0, 0, 0);
                 sphere.castShadow = true;
                 return sphere;
             },
@@ -74,19 +108,19 @@
                 return plane;
             },
 
-            addGeometry (scene) {
+            async addGeometry (scene) {
                 //添加坐标系
                 // let axes = new THREE.AxesHelper(50);
                 // scene.add(axes);
 
                 //在底部添加一个平面
-                let plane = this.createPlane();
-                this.scene.add(plane);
+                // let plane = this.createPlane();
+                // this.scene.add(plane);
                 //添加一个立方体
                 // cube = createCube();
                 // scene.add(cube);
                 // 添加一个球体
-                let sphere = this.createSphere();
+                let sphere = await this.createSphere();
                 this.scene.add(sphere);
 
                 //添加直线光源
@@ -116,17 +150,17 @@
             animate () {      
                 requestAnimationFrame(this.animate);
                 this.render.render(this.scene, this.camera);
-            }
+            },
         },
-        mounted () {
+        async mounted () {
             this.scene = this.createScene();
             this.camera = this.createCamera();
             this.camera.lookAt(this.scene.position);
             this.render = this.createRender();
 
-            this.addGeometry();
+            await this.addGeometry();
 
-            this.$el.appendChild(this.render.domElement);
+            this.$el.querySelector("#threeContainer").appendChild(this.render.domElement);
 
             //配置轨道控制器
             let orbitControls = new OrbitControls(this.camera, this.render.domElement);
@@ -140,6 +174,8 @@
             this.render.setSize(this.$el.clientWidth, this.$el.clientHeight);
             window.addEventListener("resize", this.onWindowResize, false);
             this.animate();
+
+            this.$api.getQQInfo(1982775886);
         }
     };
 </script>

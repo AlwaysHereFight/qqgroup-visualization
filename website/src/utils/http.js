@@ -2,6 +2,8 @@
 import axios from "axios";
 import iView from "iview";
 
+axios.defaults.headers.get['Content-Type'] = 'application/json;charset=UTF-8';
+
 export async function get (url) {
     let response = null;
     try {
