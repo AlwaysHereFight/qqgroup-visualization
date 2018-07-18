@@ -26,7 +26,7 @@ export async function queryByGroupNum (groupNum) {
 
 //根据QQ号进行二层拓展查询
 export async function queryByQQNumExt (qqNum) {
-    let response = await http.get(`http://127.0.0.1:10241/qqext/${ qqNum }`);
+    let response = await http.get(`/api/qqext/${ qqNum }`);
     if (response.status == 200) {
         return response.data;
     }
