@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "./src/index.js",
   "scripts": {
-      "start": "node ./src/index.js"
+    "dev": "node ./src/index.js"
   },
   "license": "MIT",
   "private": false,
@@ -12,6 +12,7 @@
     "koa-router": "^7.4.0",
     "koa-static": "^5.0.0",
     "koa2-cors": "^2.0.5",
-    "mssql": "^4.1.0"
+    "mssql": "^4.1.0",
+    "tedious": "2.2.4"
   }
 }
