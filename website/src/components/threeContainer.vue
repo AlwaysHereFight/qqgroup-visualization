@@ -57,6 +57,9 @@
         name: "threeContainer",
         data () {
             return {
+                cvs: null,
+                cvsCtx: null,
+
                 scene: null,
                 camera: null,
                 render: null,
@@ -104,30 +107,28 @@
                 }
             },
 
-            interfaceData (val, old) {
-                //新增加的群成员节点
-                let newMember = val.member.filter(iItem => !this.graphData.member.some(gItem => gItem.memberQQNum == iItem.memberQQNum));
-                
-                //新增加的群组节点
-                let newGroup = val.group.filter(iItem => !this.graphData.group.some(gItem => gItem.groupNum == iItem.groupNum));
-                
-                //新增加的连接关系
-                let newLink = val.link.filter(iItem => !this.graphData.link.some(gItem => gItem.linkQQNum == iItem.linkQQNum && gItem.linkGroupNum == iItem.linkGroupNum));
+            async interfaceData (val, old) {
+                let tmpInterfaceData = {
+                    group: val.group.filter(iItem => !this.graphData.group.some(gItem => gItem.groupNum == iItem.groupNum)),
+                    member: val.member.filter(iItem => !this.graphData.member.some(gItem => gItem.memberQQNum == iItem.memberQQNum)),
+                    link: val.link.filter(iItem => !this.graphData.link.some(gItem => gItem.linkQQNum == iItem.linkQQNum && gItem.linkGroupNum == iItem.linkGroupNum)),
+                };
 
+                console.log("开始获取数据...");
+                await this.b_fillInterfaceData(tmpInterfaceData);
+                console.log("数据获取结束");
+                console.log(tmpInterfaceData);
 
-                newMember.forEach(item => {
-                    this.$api.getQQImg(item.memberQQNum);
+                tmpInterfaceData.member.forEach(item => {
+                    let ball = this.createMemberBall(item);
+                    ball.position.set(Math.random() * 300, Math.random() * 300, Math.random() * 300);
+                    this.scene.add(ball);
                 });
 
-                newGroup.forEach(item => {
-                    this.$api.getGroupImg(item.groupNum);
-                });
 
-
-
-                this.graphData.member = this.graphData.member.concat(newMember);
-                this.graphData.group = this.graphData.group.concat(newGroup);
-                this.graphData.link = this.graphData.link.concat(newLink);
+                this.graphData.member = this.graphData.member.concat(tmpInterfaceData.member);
+                this.graphData.group = this.graphData.group.concat(tmpInterfaceData.group);
+                this.graphData.link = this.graphData.link.concat(tmpInterfaceData.link);
             },
 
 
@@ -199,13 +200,116 @@
                     }
                 },
 
-
-                async b_fillQQImg (memberList) {
-                    
+                //批量获取用户QQ头像并填充到列表中
+                b_fillQQImg (memberList) {
+                    return new Promise((resolve, reject) => {
+                        let count = 0;
+                        if (memberList.length < 1) {
+                            resolve();
+                        }                      
+                        memberList.forEach(async item => {
+                            let img = await this.$api.getQQImg(item.memberQQNum);
+                            item.img = img;
+                            count++;
+                            if (count >= memberList.length) {
+                                resolve();
+                            }
+                        });
+                    });
                 },
 
-                async b_fillGroupImg (groupList) {
+                //批量获取群头像并填充到列表中
+                b_fillGroupImg (groupList) {
+                    return new Promise((resolve, reject) => {
+                        let count = 0; 
+                        if (groupList.length < 1) {
+                            resolve();
+                        }                          
+                        groupList.forEach(async item => {
+                            let img = await this.$api.getGroupImg(item.groupNum);
+                            item.img = img;
+                            count++;
+                            if (count >= groupList.length) {
+                                resolve();
+                            }
+                        });
+                    });
+                },
 
+                //批量获取最新QQ账户信息并填充到列表中
+                b_fillQQLastData (memberList) {
+                    return new Promise((resolve, reject) => {
+                        let count = 0;
+                        if (memberList.length < 1) {
+                            resolve();
+                        }
+                        memberList.forEach(async item => {
+                            let info = await this.$api.getQQInfo(item.memberQQNum);
+                            item.info = info;
+                            count++;
+                            if (count >= memberList.length) {
+                                resolve();
+                            }
+                        });
+                    });
+                },
+
+                //批量加工从接口返回的数据
+                b_fillInterfaceData (interfaceData, timeout = 60000) {
+                    return new Promise((resolve, reject) => {
+                        let count = 0;
+
+                        let timerId = setTimeout(() => {
+                            reject();
+                        }, timeout);
+
+                        function tryFinish () {
+                            if (count >= 3) {
+                                clearInterval(timerId);
+                                resolve();
+                            }
+                        }
+
+                        (async () => {
+                            await this.b_fillQQImg(interfaceData.member);
+                            count++;
+                            tryFinish();
+                        })();
+                        (async () => {
+                            await this.b_fillGroupImg(interfaceData.group);
+                            count++;
+                            tryFinish();
+                        })();
+                        (async () => {
+                            await this.b_fillQQLastData(interfaceData.member);
+                            count++;
+                            tryFinish();
+                        })();
+                    });
+                },
+
+                //初始化Canvas2D作图
+                b_initCanvas2D () {
+                    this.cvs = this.$el.querySelector("#imgCanvas");
+                    this.cvsCtx = this.cvs.getContext("2d");
+                },
+
+                //创建用于绘图的Canvas
+                b_createCanvas () {
+                    let cvs = document.createElement("canvas");
+                    cvs.width = 640 * 2;
+                    cvs.height = 640;
+                    let cvsCtx = cvs.getContext("2d");
+                    cvsCtx.fillStyle = "#ffffff";
+                    cvsCtx.fillRect(0, 0, cvs.width, cvs.height);
+                    return cvs;
+                },
+
+                //绘制图片到准备好的Canvas上
+                b_drawCanvas (cvs, img) {
+                    let cvsCtx = cvs.getContext("2d");
+                    cvsCtx.drawImage(img, 0, 0, cvs.width / 2, cvs.height);
+                    cvsCtx.drawImage(img, cvs.width / 2, 0, cvs.width / 2, cvs.height);
                 },
             //#endregion
 
@@ -233,7 +337,23 @@
             },
 
 
-            async createQQBall (qqNum) {
+            //创建群成员3D对象
+            createMemberBall (member) {
+                let cvs = this.b_createCanvas();
+                this.b_drawCanvas(cvs, member.img);
+                let texture = new THREE.Texture(cvs);
+                let sphereGeometry = new THREE.SphereGeometry(5);
+                let sphereMaterial = new THREE.MeshStandardMaterial({
+                    color: "white",
+                    roughness: 0,
+                    metalness: 0,
+                    map: texture
+                });
+                texture.needsUpdate = true;
+                let sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+                sphere.position.set(0, 0, 0);
+                sphere.castShadow = true;
+                return sphere;
             },
 
             createGroupBall (groupNum) {
@@ -290,8 +410,8 @@
                 // cube = createCube();
                 // scene.add(cube);
                 // 添加一个球体
-                let sphere = await this.createSphere();
-                this.scene.add(sphere);
+                // let sphere = await this.createSphere();
+                // this.scene.add(sphere);
 
                 //添加直线光源
                 let spotLight = new THREE.SpotLight(0xffffff);
@@ -304,6 +424,7 @@
                 // let ambientLight = new THREE.AmbientLight(0xffffff);
                 // scene.add(ambientLight);
 
+                //添加半球光源
                 let hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x333333, 0.6);
                 hemisphereLight.position.set(0, 200, 0);
                 this.scene.add(hemisphereLight);
@@ -323,6 +444,8 @@
             },
         },
         async mounted () {
+            this.b_initCanvas2D();
+
             this.scene = this.createScene();
             this.camera = this.createCamera();
             this.camera.lookAt(this.scene.position);

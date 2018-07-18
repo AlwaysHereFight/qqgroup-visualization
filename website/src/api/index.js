@@ -36,7 +36,7 @@ export async function queryByQQNumExt (qqNum) {
 }
 
 //根据url获取外部图像
-export function getExternalImage (url, timeout = 8000) {
+export function getExternalImage (url, timeout = 10000) {
     return new Promise((resolve, reject) => {
         try {
             let imgObj = new Image();
@@ -65,15 +65,27 @@ export function getExternalImage (url, timeout = 8000) {
 
 //获取QQ用户的头像图片
 export async function getQQImg (qqNum) {
-    let img = await this.getExternalImage(`/qqlogo/headimg_dl?dst_uin=${ qqNum }&spec=640`);
-    console.log(qqNum + ` QQ头像 达成 ${ img.width } ${ img.height }`);
+    let img = null;
+    try {
+        img = await this.getExternalImage(`/qqlogo/headimg_dl?dst_uin=${ qqNum }&spec=640`);
+    }
+    catch (e) {
+        console.error("获取QQ头像失败");
+        img = null;
+    }
     return img;
 }
 
 //获取QQ群的头像图片
 export async function getGroupImg (groupNum) {
-    let img = await this.getExternalImage(`/grouplogo/gh/${ groupNum }/${ groupNum }/640/`);
-    console.log(groupNum + " 群图片 达成");
+    let img = null;
+    try {
+        img = await this.getExternalImage(`/grouplogo/gh/${ groupNum }/${ groupNum }/640/`);
+    }
+    catch (e) {
+        console.error("获取群头像失败");
+        img = null;
+    }
     return img;          
 }
 
@@ -81,13 +93,10 @@ export async function getGroupImg (groupNum) {
 export async function getQQInfo (qqNum) {
     let response = await http.get(`/qqinfo/fcg-bin/cgi_get_portrait.fcg?uins=${ qqNum }`);
     if (response.status == 200) {
-        console.log(response.data);
-        // console.log(response.data);
-        // let str = response.data.substring(109, 114);
-        // console.log(str);
-        // let buf = Buffer.from(str);
-        // console.log(buf);
-        // let str = iconv.decode(buf, "utf8");
-        // console.log(str);
+        return response.data;
+    }
+    else {
+        console.error("获取QQ基本信息失败");
+        return null;
     }
 }
