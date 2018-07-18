@@ -14,12 +14,13 @@
 
     .console {
         position: fixed;
-        top: 20px;
-        left: 20px;
+        top: 10px;
+        left: 10px;
         widows: 240px;
         height: 100px;
         padding: 10px;
-        border: solid 1px black;
+        background-color: white;
+        border: solid 1px #e0e0e0;
     }
 
     #threeContainer {
@@ -97,8 +98,10 @@
         },
         watch: {
 
-            searchType () {
-                this.searchNum = null;
+            searchType (val, old) {
+                if (val == "group" || old == "group") {
+                    this.searchNum = "";
+                }
             },
 
             interfaceData (val, old) {
@@ -109,13 +112,18 @@
                 let newGroup = val.group.filter(iItem => !this.graphData.group.some(gItem => gItem.groupNum == iItem.groupNum));
                 
                 //新增加的连接关系
-                let newLink = val.link.filter(iItem => !this.graphData.link.some(gItem => {
-                    return gItem.memberQQNum == iItem.memberQQNum && gItem.groupNum == iItem.groupNum;
-                }));
+                let newLink = val.link.filter(iItem => !this.graphData.link.some(gItem => gItem.linkQQNum == iItem.linkQQNum && gItem.linkGroupNum == iItem.linkGroupNum));
 
-                console.log(newMember);
-                console.log(newGroup);
-                console.log(newLink);
+
+                newMember.forEach(item => {
+                    this.$api.getQQImg(item.memberQQNum);
+                });
+
+                newGroup.forEach(item => {
+                    this.$api.getGroupImg(item.groupNum);
+                });
+
+
 
                 this.graphData.member = this.graphData.member.concat(newMember);
                 this.graphData.group = this.graphData.group.concat(newGroup);
@@ -133,10 +141,10 @@
             //#region 页面事件
                 handleSearchBtnClick () {
                     if (this.searchType == "qq") {
-
+                        this.b_queryByQQNum();
                     }
                     else if (this.searchType == "group") {
-
+                        this.b_queryByGroupNum();
                     }
                     else if (this.searchType == "qqext") {
                         this.b_queryByQQNumExt();

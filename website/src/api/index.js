@@ -4,7 +4,7 @@ import iconv from "iconv-lite";
 
 //根据QQ号查询
 export async function queryByQQNum (qqNum) {
-    let response = await http.get(`http://127.0.0.1:10241/qq/${ qqNum }`);
+    let response = await http.get(`/api/qq/${ qqNum }`);
     if (response.status == 200) {
         return response.data;
     }
@@ -15,7 +15,7 @@ export async function queryByQQNum (qqNum) {
 
 //根据群号查询
 export async function queryByGroupNum (groupNum) {
-    let response = await http.get(`http://127.0.0.1:10241/group/${ groupNum }`);
+    let response = await http.get(`/api/group/${ groupNum }`);
     if (response.status == 200) {
         return response.data;
     }
@@ -66,12 +66,14 @@ export function getExternalImage (url, timeout = 8000) {
 //获取QQ用户的头像图片
 export async function getQQImg (qqNum) {
     let img = await this.getExternalImage(`/qqlogo/headimg_dl?dst_uin=${ qqNum }&spec=640`);
+    console.log(qqNum + ` QQ头像 达成 ${ img.width } ${ img.height }`);
     return img;
 }
 
 //获取QQ群的头像图片
 export async function getGroupImg (groupNum) {
     let img = await this.getExternalImage(`/grouplogo/gh/${ groupNum }/${ groupNum }/640/`);
+    console.log(groupNum + " 群图片 达成");
     return img;          
 }
 
