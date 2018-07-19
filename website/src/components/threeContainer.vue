@@ -62,7 +62,7 @@
                 render: null,
 
 
-                searchNum: "",
+                searchNum: "64022468",
                 searchType: "qqext",
 
                 //接收接口返回的关系数据
@@ -116,17 +116,37 @@
                 console.log("数据获取结束");
                 console.log(tmpInterfaceData);
 
+
+                
+                let r = 50;
+                let o = 0;
+                let q = 0;
+
+                function hd (num) {
+                    return num * (2 * Math.PI / 360);
+                }
+
                 tmpInterfaceData.member.forEach((item, i) => {
                     let ball = this.t_createMemberBall(item);
-                    ball.position.set((i % 10) * 10, (i / 10) * 10, 0);
+                    let jd = i * 16;
+                    ball.position.set(
+                        r * Math.sin(hd(o)) * Math.cos(hd(q)),
+                        r * Math.sin(hd(o)) * Math.sin(hd(q)),
+                        r * Math.cos(hd(o)));
                     this.scene.add(ball);
+
+                    o += 20;
+                    if (o >= 360) {
+                        o = 0;
+                        q += 20;
+                    }
                 });
 
-                tmpInterfaceData.group.forEach((item, i) => {
-                    let ball = this.t_createGroupBall(item);
-                    ball.position.set((i % 10) * 14, (i / 10) * 14, 20);
-                    this.scene.add(ball);
-                });
+                // tmpInterfaceData.group.forEach((item, i) => {
+                //     let ball = this.t_createGroupBall(item);
+                //     ball.position.set((i % 10) * 14, (i / 10) * 14, 20);
+                //     this.scene.add(ball);
+                // });
 
 
                 this.graphData.member = this.graphData.member.concat(tmpInterfaceData.member);
@@ -317,7 +337,7 @@
                 },
                 createCamera () {
                     let camera = null;
-                    camera = new THREE.PerspectiveCamera(45, this.$el.clientWidth / this.$el.clientHeight, 0.1, 1000);
+                    camera = new THREE.PerspectiveCamera(45, this.$el.clientWidth / this.$el.clientHeight, 0.1, 2000);
                     camera.position.x = 0;
                     camera.position.y = 0;
                     camera.position.z = 500;
