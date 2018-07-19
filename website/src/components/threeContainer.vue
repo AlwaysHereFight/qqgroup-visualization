@@ -57,9 +57,6 @@
         name: "threeContainer",
         data () {
             return {
-                cvs: null,
-                cvsCtx: null,
-
                 scene: null,
                 camera: null,
                 render: null,
@@ -119,9 +116,15 @@
                 console.log("数据获取结束");
                 console.log(tmpInterfaceData);
 
-                tmpInterfaceData.member.forEach(item => {
-                    let ball = this.createMemberBall(item);
-                    ball.position.set(Math.random() * 300, Math.random() * 300, Math.random() * 300);
+                tmpInterfaceData.member.forEach((item, i) => {
+                    let ball = this.t_createMemberBall(item);
+                    ball.position.set((i % 10) * 10, (i / 10) * 10, 0);
+                    this.scene.add(ball);
+                });
+
+                tmpInterfaceData.group.forEach((item, i) => {
+                    let ball = this.t_createGroupBall(item);
+                    ball.position.set((i % 10) * 14, (i / 10) * 14, 20);
                     this.scene.add(ball);
                 });
 
@@ -288,13 +291,7 @@
                     });
                 },
 
-                //初始化Canvas2D作图
-                b_initCanvas2D () {
-                    this.cvs = this.$el.querySelector("#imgCanvas");
-                    this.cvsCtx = this.cvs.getContext("2d");
-                },
-
-                //创建用于绘图的Canvas
+                //创建用于绘图的Canvas,并清空
                 b_createCanvas () {
                     let cvs = document.createElement("canvas");
                     cvs.width = 640 * 2;
@@ -314,89 +311,80 @@
             //#endregion
 
 
-            createScene () {
-                return new THREE.Scene();
-            },
-            createCamera () {
-                let camera = null;
-                camera = new THREE.PerspectiveCamera(45, this.$el.clientWidth / this.$el.clientHeight, 0.1, 1000);
-                camera.position.x = 0;
-                camera.position.y = 0;
-                camera.position.z = 500;
-                return camera;
-            },
-            createRender () {
-                let render = null;
-                render = new THREE.WebGLRenderer();
-                render.setClearColor(0xf0f0f0);
-                render.gammaInput = true;
-                render.gammaOutput = true;
-                render.shadowMap.enabled = true;
-                render.shadowMapType = THREE.PCFSoftShadowMap;
-                return render;
-            },
+            //#region Three对象创建
+                createScene () {
+                    return new THREE.Scene();
+                },
+                createCamera () {
+                    let camera = null;
+                    camera = new THREE.PerspectiveCamera(45, this.$el.clientWidth / this.$el.clientHeight, 0.1, 1000);
+                    camera.position.x = 0;
+                    camera.position.y = 0;
+                    camera.position.z = 500;
+                    return camera;
+                },
+                createRender () {
+                    let render = null;
+                    render = new THREE.WebGLRenderer();
+                    render.setClearColor(0xf0f0f0);
+                    render.gammaInput = true;
+                    render.gammaOutput = true;
+                    render.shadowMap.enabled = true;
+                    render.shadowMapType = THREE.PCFSoftShadowMap;
+                    return render;
+                },
 
 
-            //创建群成员3D对象
-            createMemberBall (member) {
-                let cvs = this.b_createCanvas();
-                this.b_drawCanvas(cvs, member.img);
-                let texture = new THREE.Texture(cvs);
-                let sphereGeometry = new THREE.SphereGeometry(5);
-                let sphereMaterial = new THREE.MeshStandardMaterial({
-                    color: "white",
-                    roughness: 0,
-                    metalness: 0,
-                    map: texture
-                });
-                texture.needsUpdate = true;
-                let sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-                sphere.position.set(0, 0, 0);
-                sphere.castShadow = true;
-                return sphere;
-            },
+                t_createTexture (img) {
+                    let canvas = document.createElement("canvas");
+                    canvas.width = 640 * 2;
+                    canvas.height = 640;
+                    let ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0, canvas.width / 2, canvas.height);
+                    ctx.drawImage(img, canvas.width / 2, 0, canvas.width / 2, canvas.height);
+                    let texture = new THREE.Texture(canvas);
+                    canvas = null;
+                    return texture;
+                },
 
-            createGroupBall (groupNum) {
+                //创建群成员3D对象
+                t_createMemberBall (member) {
+                    let texture = this.t_createTexture(member.img);
+                    let sphereGeometry = new THREE.SphereGeometry(5);
+                    let sphereMaterial = new THREE.MeshStandardMaterial({
+                        color: "white",
+                        roughness: 0,
+                        metalness: 0,
+                        map: texture
+                    });
+                    texture.needsUpdate = true;
+                    let sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+                    texture = null;
+                    sphere.position.set(0, 0, 0);
+                    sphere.castShadow = true;
+                    return sphere;
+                },
 
-            },
+                //创建群3D对象
+                t_createGroupBall (group) {
+                    let texture = this.t_createTexture(group.img);
+                    let sphereGeometry = new THREE.SphereGeometry(7);
+                    let sphereMaterial = new THREE.MeshStandardMaterial({
+                        color: "white",
+                        roughness: 0,
+                        metalness: 0,
+                        map: texture
+                    });
+                    texture.needsUpdate = true;
+                    let sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+                    texture = null;
+                    sphere.position.set(0, 0, 0);
+                    sphere.castShadow = true;
+                    return sphere;
+                },
+            //#endregion
 
-            async createSphere () {
-                let img = await this.$api.getGroupImg(594410203);
-                let cvs = this.$el.querySelector("#imgCanvas");
-                let ctx = cvs.getContext("2d");
-                ctx.drawImage(img, 0, 0, cvs.width / 2, cvs.height);
-                ctx.drawImage(img, cvs.width / 2, 0, cvs.width / 2, cvs.height);
 
-                let texture = new THREE.Texture(cvs);
-                let sphereGeometry = new THREE.SphereGeometry(5);
-                let sphereMaterial = new THREE.MeshStandardMaterial({
-                    color: "white",
-                    roughness: 0,
-                    metalness: 0,
-                    map: texture
-                });
-                texture.needsUpdate = true;
-
-                let sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-                sphere.position.set(0, 0, 0);
-                sphere.castShadow = true;
-                return sphere;
-            },
-
-            //创建面板平面
-            createPlane () {
-                let planeGeometry = new THREE.PlaneGeometry(100, 100, 1, 1);
-                let planeMaterial = new THREE.MeshStandardMaterial({
-                    color: 0x333333
-                });
-                let plane = new THREE.Mesh(planeGeometry, planeMaterial);
-                //设置平面角度
-                plane.rotation.x = -0.5 * Math.PI;
-                plane.position.set(0, -1, 0);
-                plane.receiveShadow = true;
-                plane.shadowDarkness = 0.9;
-                return plane;
-            },
 
             async addGeometry (scene) {
                 //添加坐标系
@@ -430,22 +418,23 @@
                 this.scene.add(hemisphereLight);
             },
 
-            onWindowResize () {
-                let width = this.$el.clientWidth;
-                let height = this.$el.clientHeight;
-                this.camera.aspect = width / height;
-                this.camera.updateProjectionMatrix();
-                this.render.setSize(width, height);
-            },
 
-            animate () {      
-                requestAnimationFrame(this.animate);
-                this.render.render(this.scene, this.camera);
-            },
+            //#region 界面更新相关
+                onWindowResize () {
+                    let width = this.$el.clientWidth;
+                    let height = this.$el.clientHeight;
+                    this.camera.aspect = width / height;
+                    this.camera.updateProjectionMatrix();
+                    this.render.setSize(width, height);
+                },
+
+                animate () {      
+                    requestAnimationFrame(this.animate);
+                    this.render.render(this.scene, this.camera);
+                },
+            //#endregion
         },
         async mounted () {
-            this.b_initCanvas2D();
-
             this.scene = this.createScene();
             this.camera = this.createCamera();
             this.camera.lookAt(this.scene.position);
