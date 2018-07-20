@@ -114,33 +114,41 @@
                 console.log("开始获取数据...");
                 await this.b_fillInterfaceData(tmpInterfaceData);
                 console.log("数据获取结束");
-                console.log(tmpInterfaceData);
 
 
+
+                let member1 = this.t_createMemberBall(tmpInterfaceData.member[0]);
+                let member2 = this.t_createMemberBall(tmpInterfaceData.member[10]);
                 
                 let r = 50;
-                let o = 0;
-                let q = 0;
+                let sita = 225;
+                let fai = 270;
 
-                function hd (num) {
-                    return num * (2 * Math.PI / 360);
-                }
+                member1.position.set(
+                    r * Math.sin(this.t_radian(sita)) * Math.cos(this.t_radian(fai)),
+                    r * Math.sin(this.t_radian(sita)) * Math.sin(this.t_radian(fai)),
+                    r * Math.cos(this.t_radian(sita)));
 
-                tmpInterfaceData.member.forEach((item, i) => {
-                    let ball = this.t_createMemberBall(item);
-                    let jd = i * 16;
-                    ball.position.set(
-                        r * Math.sin(hd(o)) * Math.cos(hd(q)),
-                        r * Math.sin(hd(o)) * Math.sin(hd(q)),
-                        r * Math.cos(hd(o)));
-                    this.scene.add(ball);
+                this.scene.add(member1);
 
-                    o += 20;
-                    if (o >= 360) {
-                        o = 0;
-                        q += 20;
-                    }
-                });
+                // let testList = tmpInterfaceData.member.splice(0, 30);
+
+                // testList.forEach((item, i) => {
+                //     let ball = this.t_createMemberBall(item);
+
+                //     ball.position.set(
+                //         r * Math.sin(this.t_radian(sita)) * Math.cos(this.t_radian(fai)),
+                //         r * Math.sin(this.t_radian(sita)) * Math.sin(this.t_radian(fai)),
+                //         r * Math.cos(this.t_radian(sita)));
+
+                //     this.scene.add(ball);
+
+                //     sita += 20;
+                //     if (sita >= 360) {
+                //         sita = 0;
+                //         fai += 20;
+                //     }
+                // });
 
                 // tmpInterfaceData.group.forEach((item, i) => {
                 //     let ball = this.t_createGroupBall(item);
@@ -404,6 +412,13 @@
                 },
             //#endregion
 
+
+            //#region 工具方法
+                //角度转弧度
+                t_radian (angle) {
+                    return angle * (2 * Math.PI / 360);
+                },
+            //#endregion
 
 
             async addGeometry (scene) {
