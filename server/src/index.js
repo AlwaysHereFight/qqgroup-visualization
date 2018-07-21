@@ -1,4 +1,4 @@
-
+﻿
 const Koa = require("koa");
 const KoaRouter = require("koa-router");
 const KoaStatic = require("koa-static");
@@ -7,8 +7,8 @@ const MSSQL = require("mssql");
 
 const config = {
     user: "sa",
-    password: "gushihao",
-    server: "localhost",
+    password: "gu@shi$hao^1993*",
+    server: "www.91weixin.net",
     database: "QQGroup",
 };
 
@@ -31,16 +31,16 @@ async function main () {
         let router = new KoaRouter();
 
         //服务端跨域配置
-        let cors = Koa2Cors({
-            origin: function (ctx) {
-                return "*";
-            },
-            exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
-            maxAge: 5,
-            credentials: true,
-            allowMethods: ['GET'],
-            allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
-        });
+        // let cors = Koa2Cors({
+        //     origin: function (ctx) {
+        //         return "*";
+        //     },
+        //     exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
+        //     maxAge: 5,
+        //     credentials: true,
+        //     allowMethods: ['GET'],
+        //     allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
+        // });
 
         //QQ号拓展查询接口
         router.get('/api/qqext/:id', async (ctx, next) => {
@@ -99,8 +99,38 @@ async function main () {
             };
         });
 
+        //QQ信息表查询接口
+        router.get("/api/qqtable/:num", async (ctx, next) => {
+            let qqNum = Number(ctx.params.num);
+            let result = await pool.request()
+                            .input("qqNum", MSSQL.Int, qqNum)
+                            .execute("queryTableByQQNum");
+            let code = 200;
+            ctx.status = code;
+            ctx.body = {
+                code: code,
+                data: result.recordsets[0],
+                msg: "查询成功",
+            };
+        });
+
+        //群信息表查询接口
+        router.get("/api/grouptable/:num", async (ctx, next) => {
+            let groupNum = Number(ctx.params.num);
+            let result = await pool.request()
+                            .input("groupNum", MSSQL.Int, groupNum)
+                            .execute("queryTableByGroupNum");
+            let code = 200;
+            ctx.status = code;
+            ctx.body = {
+                code: code,
+                data: result.recordsets[0],
+                msg: "查询成功",
+            };
+        });
+
         app
-            .use(cors)
+            //.use(cors)
             .use(KoaStatic(__dirname + "/www"))
             .use(router.routes())
             .use(hold404);

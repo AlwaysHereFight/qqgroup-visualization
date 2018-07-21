@@ -121,41 +121,25 @@
                 let member2 = this.t_createMemberBall(tmpInterfaceData.member[10]);
                 
                 let r = 50;
-                let sita = 225;
-                let fai = 270;
+                let sita1 = 90;
+                let fai1 = 90;
 
                 member1.position.set(
-                    r * Math.sin(this.t_radian(sita)) * Math.cos(this.t_radian(fai)),
-                    r * Math.sin(this.t_radian(sita)) * Math.sin(this.t_radian(fai)),
-                    r * Math.cos(this.t_radian(sita)));
+                    r * Math.sin(this.t_radian(sita1)) * Math.cos(this.t_radian(fai1)),
+                    r * Math.sin(this.t_radian(sita1)) * Math.sin(this.t_radian(fai1)),
+                    r * Math.cos(this.t_radian(sita1)));
 
                 this.scene.add(member1);
 
-                // let testList = tmpInterfaceData.member.splice(0, 30);
+                let sita2 = 90;
+                let fai2 = 100;
 
-                // testList.forEach((item, i) => {
-                //     let ball = this.t_createMemberBall(item);
+                member2.position.set(
+                    r * Math.sin(this.t_radian(sita2)) * Math.cos(this.t_radian(fai2)),
+                    r * Math.sin(this.t_radian(sita2)) * Math.sin(this.t_radian(fai2)),
+                    r * Math.cos(this.t_radian(sita2)));
 
-                //     ball.position.set(
-                //         r * Math.sin(this.t_radian(sita)) * Math.cos(this.t_radian(fai)),
-                //         r * Math.sin(this.t_radian(sita)) * Math.sin(this.t_radian(fai)),
-                //         r * Math.cos(this.t_radian(sita)));
-
-                //     this.scene.add(ball);
-
-                //     sita += 20;
-                //     if (sita >= 360) {
-                //         sita = 0;
-                //         fai += 20;
-                //     }
-                // });
-
-                // tmpInterfaceData.group.forEach((item, i) => {
-                //     let ball = this.t_createGroupBall(item);
-                //     ball.position.set((i % 10) * 14, (i / 10) * 14, 20);
-                //     this.scene.add(ball);
-                // });
-
+                this.scene.add(member2);
 
                 this.graphData.member = this.graphData.member.concat(tmpInterfaceData.member);
                 this.graphData.group = this.graphData.group.concat(tmpInterfaceData.group);
@@ -378,7 +362,7 @@
                 //创建群成员3D对象
                 t_createMemberBall (member) {
                     let texture = this.t_createTexture(member.img);
-                    let sphereGeometry = new THREE.SphereGeometry(5);
+                    let sphereGeometry = new THREE.SphereGeometry(5, 20, 20);
                     let sphereMaterial = new THREE.MeshStandardMaterial({
                         color: "white",
                         roughness: 0,
@@ -417,6 +401,11 @@
                 //角度转弧度
                 t_radian (angle) {
                     return angle * (2 * Math.PI / 360);
+                },
+
+                //弧度转角度
+                t_angle (radian) {
+                    return radian / (2 * Math.PI / 360);
                 },
             //#endregion
 
@@ -491,6 +480,16 @@
             this.render.setSize(this.$el.clientWidth, this.$el.clientHeight);
             window.addEventListener("resize", this.onWindowResize, false);
             this.animate();
+
+            let a = 3;
+            let b = 4;
+            let c = 5;
+
+            let cosa = ((b * b) + (c * c) - (a * a)) / (2 * b * c);
+            let cosb = ((a * a) + (c * c) - (b * b)) / (2 * a * c);
+            let cosc = ((a * a) + (b * b) - (c * c)) / (2 * a * b);
+
+            console.log(this.t_angle(Math.acos(cosa)));
         }
     };
 </script>
