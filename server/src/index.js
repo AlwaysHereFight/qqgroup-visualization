@@ -28,7 +28,8 @@ function hold404 (ctx, next) {
 function holdAll (ctx, next) {
     let path = ctx.path;
     let time = (new Date()).toLocaleString();
-    fs.appendFile("log.txt", `${ time } ${ path }\n`);
+    let ip = ctx.ip;
+    fs.appendFile("log.txt", `${ ip } ${ time } ${ path }\n`);
     return next();
 }
 
