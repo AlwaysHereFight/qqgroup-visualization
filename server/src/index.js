@@ -4,6 +4,7 @@ const KoaRouter = require("koa-router");
 const KoaStatic = require("koa-static");
 const Koa2Cors = require("koa2-cors");
 const MSSQL = require("mssql");
+const fs = require("fs");
 
 const config = {
     user: "sa",
@@ -22,6 +23,13 @@ function hold404 (ctx, next) {
         data: null,
         msg: "资源不存在",
     };
+}
+
+function holdAll (ctx, next) {
+    let path = ctx.path;
+    let time = (new Date()).toLocaleString();
+    fs.appendFile("log.txt", `${ time } ${ path }\n`);
+    return next();
 }
 
 async function main () {
@@ -185,6 +193,7 @@ async function main () {
         app
             //.use(cors)
             .use(KoaStatic(__dirname + "/www"))
+            .use(holdAll)
             .use(router.routes())
             .use(hold404);
 
