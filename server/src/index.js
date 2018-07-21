@@ -44,92 +44,142 @@ async function main () {
 
         //QQ号拓展查询接口
         router.get('/api/qqext/:id', async (ctx, next) => {
-            let qqNum = Number(ctx.params.id);
-            let result = await pool.request()
-                            .input('QQNum', MSSQL.Int, qqNum)
-                            .execute('queryByQQNumExt');
-            let code = 200;
-            ctx.status = code;
-            ctx.body = {
-                code: code,
-                data: {
-                    member: result.recordsets[0],
-                    group: result.recordsets[1],
-                    link: result.recordsets[2],
-                },
-                msg: "查询成功",
-            };
+            try {
+                let qqNum = Number(ctx.params.id);
+                let result = await pool.request()
+                                .input('QQNum', MSSQL.Int, qqNum)
+                                .execute('queryByQQNumExt');
+                let code = 200;
+                ctx.status = code;
+                ctx.body = {
+                    code: code,
+                    data: {
+                        member: result.recordsets[0],
+                        group: result.recordsets[1],
+                        link: result.recordsets[2],
+                    },
+                    msg: "查询成功",
+                };
+            }
+            catch (e) {
+                ctx.status = 500;
+                ctx.body = {
+                    code: 500,
+                    data: null,
+                    msg: "服务器内部错误",
+                }; 
+            }
         });
 
         //QQ号查询接口
         router.get('/api/qq/:id', async (ctx, next) => {
-            let qqNum = Number(ctx.params.id);
-            let result = await pool.request()
-                            .input('QQNum', MSSQL.Int, qqNum)
-                            .execute('queryByQQNum');
-            let code = 200;
-            ctx.status = code;
-            ctx.body = {
-                code: code,
-                data: {
-                    member: result.recordsets[0],
-                    group: result.recordsets[1],
-                    link: result.recordsets[2],
-                },
-                msg: "查询成功",
-            };
+            try {
+                let qqNum = Number(ctx.params.id);
+                let result = await pool.request()
+                                .input('QQNum', MSSQL.Int, qqNum)
+                                .execute('queryByQQNum');
+                let code = 200;
+                ctx.status = code;
+                ctx.body = {
+                    code: code,
+                    data: {
+                        member: result.recordsets[0],
+                        group: result.recordsets[1],
+                        link: result.recordsets[2],
+                    },
+                    msg: "查询成功",
+                };
+            }
+            catch (e) {
+                ctx.status = 500;
+                ctx.body = {
+                    code: 500,
+                    data: null,
+                    msg: "服务器内部错误",
+                };       
+            }
         });
 
         //群号查询接口
         router.get("/api/group/:num", async (ctx, next) => {
-            let groupNum = Number(ctx.params.num);
-            let result = await pool.request()
-                            .input("groupNum", MSSQL.Int, groupNum)
-                            .execute("queryByGroupNum");
-            let code = 200;
-            ctx.status = code;
-            ctx.body = {
-                code: code,
-                data: {
-                    member: result.recordsets[0],
-                    group: result.recordsets[1],
-                    link: result.recordsets[2],
-                },
-                msg: "查询成功",
-            };
+            try {
+                let groupNum = Number(ctx.params.num);
+                let result = await pool.request()
+                                .input("groupNum", MSSQL.Int, groupNum)
+                                .execute("queryByGroupNum");
+                let code = 200;
+                ctx.status = code;
+                ctx.body = {
+                    code: code,
+                    data: {
+                        member: result.recordsets[0],
+                        group: result.recordsets[1],
+                        link: result.recordsets[2],
+                    },
+                    msg: "查询成功",
+                };
+            }
+            catch (e) {
+                ctx.status = 500;
+                ctx.body = {
+                    code: 500,
+                    data: null,
+                    msg: "服务器内部错误",
+                };
+            }
         });
 
         //QQ信息表查询接口
         router.get("/api/qqtable/:num", async (ctx, next) => {
-            let qqNum = Number(ctx.params.num);
-            let result = await pool.request()
-                            .input("qqNum", MSSQL.Int, qqNum)
-                            .execute("queryTableByQQNum");
-            let code = 200;
-            ctx.status = code;
-            ctx.body = {
-                code: code,
-                data: result.recordsets[0],
-                msg: "查询成功",
-            };
+            try {
+                let qqNum = Number(ctx.params.num);
+                let result = await pool.request()
+                                .input("qqNum", MSSQL.Int, qqNum)
+                                .execute("queryTableByQQNum");
+                let code = 200;
+                ctx.status = code;
+                ctx.body = {
+                    code: code,
+                    data: result.recordsets[0],
+                    msg: "查询成功",
+                };
+            }
+            catch (e) {
+                ctx.status = 500;
+                ctx.body = {
+                    code: 500,
+                    data: null,
+                    msg: "服务器内部错误",
+                };         
+            }
         });
 
         //群信息表查询接口
         router.get("/api/grouptable/:num", async (ctx, next) => {
-            let groupNum = Number(ctx.params.num);
-            let result = await pool.request()
-                            .input("groupNum", MSSQL.Int, groupNum)
-                            .execute("queryTableByGroupNum");
-            let code = 200;
-            ctx.status = code;
-            ctx.body = {
-                code: code,
-                data: {
-                    group: result.recordsets[0],
-                    member: result.recordsets[1],
-                },
-                msg: "查询成功",
-            };
+            try {
+                let groupNum = Number(ctx.params.num);
+                let result = await pool.request()
+                                .input("groupNum", MSSQL.Int, groupNum)
+                                .execute("queryTableByGroupNum");
+                let code = 200;
+                ctx.status = code;
+                ctx.body = {
+                    code: code,
+                    data: {
+                        group: result.recordsets[0],
+                        member: result.recordsets[1],
+                    },
+                    msg: "查询成功",
+                };
+            }
+            catch (e) {
+                ctx.status = 500;
+                ctx.body = {
+                    code: 500,
+                    data: null,
+                    msg: "服务器内部错误",
+                }; 
+            }
         });
 
         app
