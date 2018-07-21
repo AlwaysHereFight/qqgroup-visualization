@@ -124,7 +124,10 @@ async function main () {
             ctx.status = code;
             ctx.body = {
                 code: code,
-                data: result.recordsets[0],
+                data: {
+                    group: result.recordsets[0],
+                    member: result.recordsets[1],
+                },
                 msg: "查询成功",
             };
         });
