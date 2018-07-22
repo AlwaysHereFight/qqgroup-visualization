@@ -35,6 +35,28 @@ export async function queryByQQNumExt (qqNum) {
     }
 }
 
+//根据QQ号查询QQ加群信息表
+export async function queryTableByQQNum (qqNum) {
+    let response = await http.get(`http://www.91weixin.net/api/qqtable/${ qqNum }`);
+    if (response.status == 200) {
+        return response.data;
+    }
+    else {
+        return null;
+    }
+}
+
+//根据群号查询群信息表
+export async function queryTableByGroupNum (qqNum) {
+    let response = await http.get(`http://www.91weixin.net/api/grouptable/${ qqNum }`);
+    if (response.status == 200) {
+        return response.data;
+    }
+    else {
+        return null;
+    }
+}
+
 //根据url获取外部图像
 export function getExternalImage (url, timeout = 10000) {
     return new Promise((resolve, reject) => {

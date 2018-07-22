@@ -33,16 +33,7 @@
     <div class="outDiv">
         <canvas id="imgCanvas" width="1280" height="640"></canvas>
         <div class="console">
-            <Input
-                v-model="searchNum"
-                :placeholder="searchPlaceholder">
-                <Select v-model="searchType" slot="prepend" style="width: 80px">
-                    <Option value="qq">QQ号</Option>
-                    <Option value="group">群号</Option>
-                    <Option value="qqext">二层查</Option>
-                </Select>
-                <Button slot="append" icon="ios-search" @click="handleSearchBtnClick"></Button>
-            </Input>
+            <search type="table"></search>
         </div>
         <div id="threeContainer">
         </div>
@@ -52,6 +43,7 @@
 <script>
     import * as THREE from "three";
     import OrbitControls from "three-orbitcontrols";
+    import search from "../components/search";
 
     export default {
         name: "threeContainer",
@@ -490,6 +482,9 @@
             let cosc = ((a * a) + (b * b) - (c * c)) / (2 * a * b);
 
             console.log(this.t_angle(Math.acos(cosa)));
+        },
+        components: {
+            search            
         }
     };
 </script>
