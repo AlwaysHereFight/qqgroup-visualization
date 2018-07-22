@@ -29,7 +29,7 @@ function holdAll (ctx, next) {
     let path = ctx.path;
     let time = (new Date()).toLocaleString();
     let ip = ctx.ip;
-    fs.appendFile("log.txt", `${ ip } ${ time } ${ path }\n`);
+    fs.appendFile("log.txt", `${ ip } ${ time } ${ path }\r\n`, err => { });
     return next();
 }
 
