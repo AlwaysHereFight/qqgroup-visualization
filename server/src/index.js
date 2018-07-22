@@ -15,6 +15,7 @@ const config = {
 
 const serverPort = 10241;
 
+//404中间件
 function hold404 (ctx, next) {
     let code = 404;
     ctx.status = code;
@@ -25,6 +26,7 @@ function hold404 (ctx, next) {
     };
 }
 
+//记录每一次请求信息到日志文件的中间件
 function holdAll (ctx, next) {
     let path = ctx.path;
     let time = (new Date()).toLocaleString();
@@ -33,13 +35,24 @@ function holdAll (ctx, next) {
     return next();
 }
 
+function setCtx500 (ctx) {
+    let code = 500;
+    ctx.status = code;
+    ctx.body = {
+        code: code,
+        data: null,
+        msg: "服务器内部错误",
+    };   
+}
+
+//服务端异步主函数
 async function main () {
     try {
         let pool = await MSSQL.connect(config);
         let app = new Koa();
         let router = new KoaRouter();
 
-        //服务端跨域配置
+        //服务端跨域配置，因为后来加入了nginx跨域所以不需要了
         // let cors = Koa2Cors({
         //     origin: function (ctx) {
         //         return "*";
@@ -51,13 +64,13 @@ async function main () {
         //     allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
         // });
 
-        //QQ号拓展查询接口
-        router.get('/api/qqext/:id', async (ctx, next) => {
+        //QQ关系图查询接口
+        router.get("/api/qq/:num", async (ctx, next) => {
             try {
-                let qqNum = Number(ctx.params.id);
+                let qqNum = Number(ctx.params.num);
                 let result = await pool.request()
-                                .input('QQNum', MSSQL.Int, qqNum)
-                                .execute('queryByQQNumExt');
+                                .input("QQNum", MSSQL.Int, qqNum)
+                                .execute("queryByQQNum");
                 let code = 200;
                 ctx.status = code;
                 ctx.body = {
@@ -71,22 +84,17 @@ async function main () {
                 };
             }
             catch (e) {
-                ctx.status = 500;
-                ctx.body = {
-                    code: 500,
-                    data: null,
-                    msg: "服务器内部错误",
-                }; 
+                setCtx500(ctx);   
             }
         });
 
-        //QQ号查询接口
-        router.get('/api/qq/:id', async (ctx, next) => {
+        //QQ拓展关系图查询接口
+        router.get("/api/qqext/:num", async (ctx, next) => {
             try {
-                let qqNum = Number(ctx.params.id);
+                let qqNum = Number(ctx.params.num);
                 let result = await pool.request()
-                                .input('QQNum', MSSQL.Int, qqNum)
-                                .execute('queryByQQNum');
+                                .input("QQNum", MSSQL.Int, qqNum)
+                                .execute("queryByQQNumExt");
                 let code = 200;
                 ctx.status = code;
                 ctx.body = {
@@ -100,16 +108,11 @@ async function main () {
                 };
             }
             catch (e) {
-                ctx.status = 500;
-                ctx.body = {
-                    code: 500,
-                    data: null,
-                    msg: "服务器内部错误",
-                };       
+                setCtx500(ctx);
             }
         });
 
-        //群号查询接口
+        //群关系图查询接口
         router.get("/api/group/:num", async (ctx, next) => {
             try {
                 let groupNum = Number(ctx.params.num);
@@ -129,12 +132,7 @@ async function main () {
                 };
             }
             catch (e) {
-                ctx.status = 500;
-                ctx.body = {
-                    code: 500,
-                    data: null,
-                    msg: "服务器内部错误",
-                };
+                setCtx500(ctx);
             }
         });
 
@@ -154,12 +152,7 @@ async function main () {
                 };
             }
             catch (e) {
-                ctx.status = 500;
-                ctx.body = {
-                    code: 500,
-                    data: null,
-                    msg: "服务器内部错误",
-                };         
+                setCtx500(ctx);       
             }
         });
 
@@ -182,12 +175,7 @@ async function main () {
                 };
             }
             catch (e) {
-                ctx.status = 500;
-                ctx.body = {
-                    code: 500,
-                    data: null,
-                    msg: "服务器内部错误",
-                }; 
+                setCtx500(ctx);
             }
         });
 
@@ -202,7 +190,7 @@ async function main () {
         console.log(`服务已经启动，工作在 ${ serverPort } 端口...`);
     }
     catch (e) {
-        console.error(e);
+        console.error(e.message);
     }
 }
 
