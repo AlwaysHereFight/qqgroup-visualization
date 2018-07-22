@@ -4,18 +4,16 @@
 </style>
 
 <template>
-    <div>
-        <Input
-            v-model="searchNum"
-            :placeholder="searchPlaceholder">
-            <Select v-model="searchType" slot="prepend" style="width: 80px">
-                <Option value="qq">QQ号</Option>
-                <Option value="group">群号</Option>
-                <Option v-if="this.type == 'graph'" value="qqext">二层查</Option>
-            </Select>
-            <Button slot="append" icon="ios-search" @click="handleSearchBtnClick"></Button>
-        </Input>
-    </div>
+    <Input
+        v-model="searchNum"
+        :placeholder="searchPlaceholder">
+        <Select v-model="searchType" slot="prepend" style="width: 80px">
+            <Option value="qq">QQ号</Option>
+            <Option value="group">群号</Option>
+            <Option v-if="this.type == 'graph'" value="qqext">二层查</Option>
+        </Select>
+        <Button slot="append" icon="ios-search" @click="handleSearchBtnClick"></Button>
+    </Input>
 </template>
 
 <script>
@@ -58,17 +56,20 @@
         },
         methods: {
             handleSearchBtnClick () {
-                alert(1);
+                this.$emit("on-search", {
+                    searchType: this.searchType,
+                    searchNum: this.searchNum,
+                });
             }
         },
-        mounth () {
+        mounted () {
             if (this.type == "graph") {
                 this.searchType = "qqext";
             }
             else {
                 this.searchType = "qq";
             }
-            this.searchNum = 10000;
+            this.searchNum = "";
         }
     };
 </script>
