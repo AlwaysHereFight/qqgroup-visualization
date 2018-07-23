@@ -3,15 +3,18 @@
     .search {
         margin-top: 15px;
         margin-left: 6px;
-        width: 500px;
         display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        align-items: center;
+        flex-direction: column;
+        align-items: flex-start;
     }
 
     .search a {
         width: 280px;
+    }
+
+    .search .searchDiv {
+        width: 280px;
+        margin-bottom: 5px;
     }
 
     .qqInfo {
@@ -42,8 +45,12 @@
 <template>
     <div class="tableSearch">
         <div class="search">
-            <search type="table" @on-search="handleSearch"></search>
-            <a href="https://github.com/gstok/qqgroup-visualization" target="view_window">项目github地址，给我个star吧</a>
+            <div class="searchDiv">
+                <search type="table" @on-search="handleSearch"></search>
+            </div>
+            <div>
+                <a href="https://github.com/gstok/qqgroup-visualization" target="view_window">项目github地址，给我个star吧</a>
+            </div>
         </div>
         <template v-if="type == 'qqTable'">
             <div class="qqInfo">
