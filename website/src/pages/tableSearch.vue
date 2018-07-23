@@ -3,7 +3,15 @@
     .search {
         margin-top: 15px;
         margin-left: 6px;
-        width: 320px;
+        width: 500px;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .search a {
+        width: 280px;
     }
 
     .qqInfo {
@@ -35,6 +43,7 @@
     <div class="tableSearch">
         <div class="search">
             <search type="table" @on-search="handleSearch"></search>
+            <a href="https://github.com/gstok/qqgroup-visualization" target="view_window">项目github地址，给我个star吧</a>
         </div>
         <template v-if="type == 'qqTable'">
             <div class="qqInfo">
