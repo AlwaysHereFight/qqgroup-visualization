@@ -23,8 +23,16 @@
     }
 </style>
 
+<style>
+    .tableSearch .qqImgSmall {
+        width: 32px;
+        height: 32px;
+        cursor: pointer;
+    }
+</style>
+
 <template>
-    <div>
+    <div class="tableSearch">
         <div class="search">
             <search type="table" @on-search="handleSearch"></search>
         </div>
@@ -92,11 +100,13 @@
                         render: (h, params) => {
                             return h("img", {
                                 attrs: {
-                                    src: `http://www.91weixin.net/grouplogo/gh/${ params.row.groupNum }/${ params.row.groupNum }/640/`
+                                    class: "qqImgSmall",
+                                    src: `http://www.91weixin.net/grouplogo/gh/${ this.searchNum }/${ this.searchNum }/640/`
                                 },
-                                style: {
-                                    width: "32px",
-                                    height: "32px",
+                                on: {
+                                    click: () => {
+                                        location.href = `/table/group/${ this.searchNum }`;
+                                    }
                                 }
                             });
                         }
@@ -141,11 +151,13 @@
                             render: (h, params) => {
                                 return h("img", {
                                     attrs: {
+                                        class: "qqImgSmall",
                                         src: `http://www.91weixin.net/grouplogo/gh/${ params.row.groupNum }/${ params.row.groupNum }/640/`
                                     },
-                                    style: {
-                                        width: "32px",
-                                        height: "32px",
+                                    on: {
+                                        click: () => {
+                                            location.href = `/table/group/${ params.row.groupNum }`;
+                                        }
                                     }
                                 });
                             }
@@ -205,11 +217,13 @@
                             render: (h, params) => {
                                 return h("img", {
                                     attrs: {
+                                        class: "qqImgSmall",
                                         src: `http://www.91weixin.net/qqlogo/headimg_dl?dst_uin=${ params.row.memberQQNum }&spec=640`
                                     },
-                                    style: {
-                                        width: "32px",
-                                        height: "32px",
+                                    on: {
+                                        click: () => {
+                                            location.href = `/table/qq/${ params.row.memberQQNum }`;
+                                        }
                                     }
                                 });
                             }
@@ -248,6 +262,13 @@
             handleSearch (searchObj) {
                 let searchType = searchObj.searchType;
                 let searchNum = searchObj.searchNum;
+
+                searchNum = parseInt(searchNum);
+                if (searchNum !== searchNum) {
+                    this.$Message.warning("查询QQ号格式错误");
+                    return;
+                }
+
                 if (searchType == "qq") {
                     location.assign(`/table/qq/${ searchNum }`);
                 }
