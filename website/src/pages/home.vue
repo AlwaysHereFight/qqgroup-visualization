@@ -4,7 +4,7 @@
 </style>
 
 <template>
-    <threeContainer />
+    <router-view></router-view>
 </template>
 
 <script>
@@ -17,9 +17,8 @@
 
             };
         },
-        async mounted () {
-            // let data = await this.$api.queryByQQNum(10000);
-            // console.log(data);
+        mounted () {
+            this.$router.push("/table/qq/10001");
         },
         components: {
             threeContainer

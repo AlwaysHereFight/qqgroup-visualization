@@ -481,7 +481,7 @@
             let cosb = ((a * a) + (c * c) - (b * b)) / (2 * a * c);
             let cosc = ((a * a) + (b * b) - (c * c)) / (2 * a * b);
 
-            console.log(this.t_angle(Math.acos(cosa)));
+            // console.log(this.t_angle(Math.acos(cosa)));
         },
         components: {
             search            
