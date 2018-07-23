@@ -8,8 +8,6 @@
 </template>
 
 <script>
-    import threeContainer from "../components/threeContainer";
-
     export default {
         name: "home",
         data () {
@@ -21,7 +19,7 @@
             this.$router.push("/graph/qqext/10001");
         },
         components: {
-            threeContainer
+
         }
     };
 </script>

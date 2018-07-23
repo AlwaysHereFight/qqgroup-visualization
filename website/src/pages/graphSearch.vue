@@ -13,10 +13,9 @@
 
     .console {
         position: fixed;
-        top: 10px;
-        left: 10px;
+        top: 8px;
+        left: 8px;
         widows: 240px;
-        height: 100px;
         padding: 10px;
         background-color: white;
         border: solid 1px #e0e0e0;
@@ -32,7 +31,7 @@
     <div class="outDiv">
         <canvas id="imgCanvas" width="1280" height="640"></canvas>
         <div class="console">
-            <search type="table"></search>
+            <search type="graph"></search>
         </div>
         <div id="threeContainer">
         </div>

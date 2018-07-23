@@ -69,7 +69,7 @@
             else {
                 this.searchType = "qq";
             }
-            this.searchNum = "";
+            this.searchNum = "10001";
         }
     };
 </script>
