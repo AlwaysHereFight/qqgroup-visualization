@@ -18,7 +18,7 @@
             };
         },
         mounted () {
-            this.$router.push("/table/qq/10001");
+            this.$router.push("/graph/qqext/10001");
         },
         components: {
             threeContainer

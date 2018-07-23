@@ -11,12 +11,17 @@
 
 <template>
     <div id='app'>
-        <router-view />
+        <home-page />
     </div>
 </template>
 
 <script>
+    import homePage from "./pages/home";
+
     export default {
-        name: 'App'
+        name: 'App',
+        components: {
+            homePage
+        }
     }
 </script>

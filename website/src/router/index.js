@@ -37,6 +37,11 @@ export default new Router({
             component: graphSearchPage,
         },
         {
+            path: "/graph/qqext/:num",
+            name: "qqExtGraph",
+            component: graphSearchPage,
+        },
+        {
             path: "/graph/qq/:num",
             name: "qqGraph",
             component: graphSearchPage,
